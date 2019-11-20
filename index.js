@@ -1,4 +1,5 @@
-const app = require('express')();
+//const app = require('express')();
+const http = require('http');
 const port = 8580;
 
 
@@ -14,13 +15,22 @@ function template(name, pass) {
 </form>`;
 }
 
-app.get('/', (request, response) => {
-    const name = request.query.name || '';
-    const pass = request.query.pass || '';
-    if (name && pass) {
-        response.send(`<h1>Hi ${name}</h1>`);
-    } else {
-        response.send(template(name, pass));
+function getDataUrl(url) {
+    try {
+        return require('url').parse(url, true).query;
+    } catch (e) { console.error(e.message) }
+}
+
+function server(req, res) {
+    const data = getDataUrl(req.url);
+    const name = data.name || '';
+    const pass = data.pass || '';
+    res.writeHeader(200, { 'Content-type': 'text/html' });
+    if(name && pass){
+        res.end(`<h1>Hi ${name}</h1>`);
+    }else{
+        res.end(template(name, pass));
     }
-});
-app.listen(port);
+}
+
+http.createServer(server).listen(port);
