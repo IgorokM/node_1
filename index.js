@@ -19,7 +19,8 @@ app.get('/', (request, response) => {
     const pass = request.query.pass || '';
     if (name && pass) {
         response.send(`<h1>Hi ${name}</h1>`);
+    } else {
+        response.send(template(name, pass));
     }
-    response.send(template(name, pass));
 });
 app.listen(port);

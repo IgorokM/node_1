@@ -17,9 +17,6 @@
     "url": "https://github.com/IgorokM/node_1/issues"
   },
   "homepage": "https://github.com/IgorokM/node_1#readme",
-  "devDependencies": {
-    "nodemon": "^1.19.4"
-  },
   "dependencies": {
     "express": "^4.17.1"
   }
