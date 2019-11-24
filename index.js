@@ -20,16 +20,22 @@ function getDataUrl(url) {
     } catch (e) { console.error(e.message) }
 }
 
-function server(req, res) {
+function handler(req, res) {
     const data = getDataUrl(req.url);
     const name = data.name || '';
     const pass = data.pass || '';
-    res.writeHeader(200, { 'Content-type': 'text/html' });
+    const SUCCESS = `<h1>Hi ${name}</h1>`;
+    const TEMPLATE = template(name, pass);
+    let body = 0;
     if(name && pass){
-        res.end(`<h1>Hi ${name}</h1>`);
+        body = SUCCESS;
+        res.writeHeader(200, { 'Content-type': 'text/html', 'Content-Length': Buffer.byteLength(body) }).end(SUCCESS);
+    }else if(!name && !pass){
+        body = TEMPLATE;
+        res.writeHeader(200, { 'Content-type': 'text/html', 'Content-Length': Buffer.byteLength(body) }).end(TEMPLATE);
     }else{
-        res.end(template(name, pass));
+        body = TEMPLATE;
+        res.writeHeader(401, { 'Content-type': 'text/html', 'Content-Length': Buffer.byteLength(body) }).end(TEMPLATE);
     }
 }
-
-http.createServer(server).listen(port);
+http.createServer(handler).listen(port);
