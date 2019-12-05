@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index"
+    "start": "nodemon index",
+    "test": "clinic doctor --autocannon [/] -- node index"
   },
   "repository": {
     "type": "git",

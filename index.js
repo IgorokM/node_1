@@ -1,8 +1,13 @@
 const http = require('http');
+const url = require('url');
 const port = 8580;
 
 
 
+/**
+ * @param {string | string[]} name
+ * @param {string | string[]} pass
+ */
 function template(name, pass) {
     return `
 <form action="./">
@@ -14,10 +19,15 @@ function template(name, pass) {
 </form>`;
 }
 
-function getDataUrl(url) {
+/**
+ * @param {string} urlString
+ */
+function getDataUrl(urlString) {
     try {
-        return require('url').parse(url, true).query;
-    } catch (e) { console.error(e.message) }
+        return url.parse(urlString, true).query;
+    } catch (e) {
+        console.error(e.message)
+    }
 }
 
 function handler(req, res) {
@@ -26,16 +36,21 @@ function handler(req, res) {
     const pass = data.pass || '';
     const SUCCESS = `<h1>Hi ${name}</h1>`;
     const TEMPLATE = template(name, pass);
-    let body = 0;
-    if(name && pass){
-        body = SUCCESS;
-        res.writeHeader(200, { 'Content-type': 'text/html', 'Content-Length': Buffer.byteLength(body) }).end(SUCCESS);
-    }else if(!name && !pass){
-        body = TEMPLATE;
-        res.writeHeader(200, { 'Content-type': 'text/html', 'Content-Length': Buffer.byteLength(body) }).end(TEMPLATE);
-    }else{
-        body = TEMPLATE;
-        res.writeHeader(401, { 'Content-type': 'text/html', 'Content-Length': Buffer.byteLength(body) }).end(TEMPLATE);
+    if (name && pass) {
+        res.writeHeader(200, {
+            'Content-type': 'text/html',
+            'Content-Length': Buffer.byteLength(SUCCESS)
+        }).end(SUCCESS);
+    } else if (!name && !pass) {
+        res.writeHeader(200, {
+            'Content-type': 'text/html',
+            'Content-Length': Buffer.byteLength(TEMPLATE)
+        }).end(TEMPLATE);
+    } else {
+        res.writeHeader(401, {
+            'Content-type': 'text/html',
+            'Content-Length': Buffer.byteLength(TEMPLATE)
+        }).end(TEMPLATE);
     }
 }
 http.createServer(handler).listen(port);
